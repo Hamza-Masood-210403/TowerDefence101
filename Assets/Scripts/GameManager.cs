@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour {
 
 	public void WinLevel ()
 	{
+		if (GameIsOver == true)
+			return;
 		GameIsOver = true;
 		completeLevelUI.SetActive(true);
 	}
