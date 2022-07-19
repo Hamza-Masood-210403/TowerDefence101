@@ -13,20 +13,28 @@ public class Node : MonoBehaviour {
 	public TurretBlueprint turretBlueprint;
 	[HideInInspector]
 	public bool isUpgraded = false;
-
+	public float sellcost;
 	private Renderer rend;
 	private Color startColor;
-
 	BuildManager buildManager;
-
+	public float depreciation;
 	void Start ()
 	{
+		sellcost = -100;
+		depreciation = 0;
 		rend = GetComponent<Renderer>();
 		startColor = rend.material.color;
-
 		buildManager = BuildManager.instance;
     }
+	void Update()
+    {
+		if (depreciation == 0)
+			return;
+		sellcost = sellcost - depreciation*Time.deltaTime;
+		if (sellcost <= 0)
+			SellTurret();
 
+	}
 	public Vector3 GetBuildPosition ()
 	{
 		return transform.position + positionOffset;
@@ -58,7 +66,8 @@ public class Node : MonoBehaviour {
 		}
 
 		PlayerStats.Money -= blueprint.cost;
-
+		sellcost = blueprint.cost;
+		depreciation = blueprint.cost / 50;
 		GameObject _turret = (GameObject)Instantiate(blueprint.prefab, GetBuildPosition(), Quaternion.identity);
 		turret = _turret;
 
@@ -79,7 +88,7 @@ public class Node : MonoBehaviour {
 		}
 
 		PlayerStats.Money -= turretBlueprint.upgradeCost;
-
+		sellcost+= turretBlueprint.upgradeCost;
 		//Get rid of the old turret
 		Destroy(turret);
 
@@ -97,10 +106,12 @@ public class Node : MonoBehaviour {
 
 	public void SellTurret ()
 	{
-		PlayerStats.Money += turretBlueprint.GetSellAmount();
+		if (sellcost <= 0)
+			sellcost = 0;
+		PlayerStats.Money += (int)sellcost;
 
-		GameObject effect = (GameObject)Instantiate(buildManager.sellEffect, GetBuildPosition(), Quaternion.identity);
-		Destroy(effect, 5f);
+		//GameObject effect = (GameObject)Instantiate(buildManager.sellEffect, GetBuildPosition(), Quaternion.identity);
+		//Destroy(effect, 5f);
 
 		Destroy(turret);
 		turretBlueprint = null;

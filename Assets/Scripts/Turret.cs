@@ -33,7 +33,6 @@ public class Turret : MonoBehaviour {
 	public float turnSpeed = 10f;
 
 	public Transform firePoint;
-
 	// Use this for initialization
 	void Start () {
 		InvokeRepeating("UpdateTarget", 0f, 0.5f);
