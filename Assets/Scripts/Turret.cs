@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class Turret : MonoBehaviour {
 
@@ -40,7 +41,12 @@ public class Turret : MonoBehaviour {
 	
 	void UpdateTarget ()
 	{
-		GameObject[] enemies = GameObject.FindGameObjectsWithTag(enemyTag);
+		//GameObject[] enemies = GameObject.FindGameObjectsWithTag(enemyTag);
+		GameObject[] tag_1 = GameObject.FindGameObjectsWithTag(enemyTag);
+
+		GameObject[] tag_2 = GameObject.FindGameObjectsWithTag("Boss");
+
+		GameObject[] enemies = tag_1.Concat(tag_2).ToArray();
 		float shortestDistance = Mathf.Infinity;
 		GameObject nearestEnemy = null;
 		foreach (GameObject enemy in enemies)
